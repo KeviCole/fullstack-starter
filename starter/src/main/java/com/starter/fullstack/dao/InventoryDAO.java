@@ -51,8 +51,10 @@ public class InventoryDAO {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    // TODO
-    return null;
+    //Inserts inventory and changes Id
+    this.mongoTemplate.insert(inventory);
+    inventory.setId(null);
+    return inventory;
   }
 
   /**
@@ -62,6 +64,8 @@ public class InventoryDAO {
    */
   public Optional<Inventory> retrieve(String id) {
     // TODO
+    List<Inventory> storage = findAll();
+    //return mongoTemplate.findById(id, storage);
     return Optional.empty();
   }
 
