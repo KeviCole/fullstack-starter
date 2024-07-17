@@ -1,5 +1,6 @@
 package com.starter.fullstack.dao;
 
+import com.mongodb.client.result.DeleteResult;
 import com.starter.fullstack.api.Inventory;
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +88,14 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
+    //Wrapped in optional in case of null
+    Optional<Inventory> inventory = retrieve(id);
+    if(inventory.isPresent()){
+      //If exists, unwraps and removes from collection
+      Inventory newInventory = inventory.get();
+      this.mongoTemplate.remove(newInventory);
+    }
+    //If present then was removed, otherwise nothing to remove, so always returns empty object
     return Optional.empty();
   }
 }
