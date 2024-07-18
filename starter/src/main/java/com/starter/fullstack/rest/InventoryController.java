@@ -48,9 +48,9 @@ public class InventoryController {
 
   @DeleteMapping
   public Inventory deleteInventories(@RequestBody String id) {
-    //If exists, unwraps and removes from collection
+    //Deletes inventory
     Optional<Inventory> inventory = this.inventoryDAO.delete(id);
-    //Returns original or new inventory
+    //Unwraps and returns original or new inventory
     return inventory.orElseGet(Inventory::new);
   }
 }
