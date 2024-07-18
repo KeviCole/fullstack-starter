@@ -57,7 +57,7 @@ public class InventoryControllerTest {
      */
     @Test
     public void findAll() throws Throwable {
-        this.mockMvc.perform(get("/inventories")
+        this.mockMvc.perform(get("/inventory")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
