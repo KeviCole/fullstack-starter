@@ -52,9 +52,12 @@ public class InventoryDAO {
    */
   public Inventory create(Inventory inventory) {
     //Inserts inventory and changes Id
-    this.mongoTemplate.insert(inventory);
-    inventory.setId(null);
-    return inventory;
+    Inventory newInventory = new Inventory();
+    newInventory.setName(inventory.getName());
+    newInventory.setProductType(inventory.getProductType());
+    newInventory.setId(null);
+    this.mongoTemplate.insert(newInventory);
+    return newInventory;
   }
 
   /**
@@ -64,8 +67,6 @@ public class InventoryDAO {
    */
   public Optional<Inventory> retrieve(String id) {
     // TODO
-    List<Inventory> storage = findAll();
-    //return mongoTemplate.findById(id, storage);
     return Optional.empty();
   }
 
