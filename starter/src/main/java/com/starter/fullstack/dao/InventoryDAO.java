@@ -51,8 +51,13 @@ public class InventoryDAO {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    // TODO
-    return null;
+    //Inserts inventory and changes Id
+    Inventory newInventory = new Inventory();
+    newInventory.setName(inventory.getName());
+    newInventory.setProductType(inventory.getProductType());
+    newInventory.setId(null);
+    this.mongoTemplate.insert(newInventory);
+    return newInventory;
   }
 
   /**
