@@ -1,5 +1,6 @@
 package com.starter.fullstack.dao;
 
+import com.mongodb.client.result.DeleteResult;
 import com.starter.fullstack.api.Inventory;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 /**
@@ -87,7 +90,10 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
-    return Optional.empty();
+    //Creates query to search for id
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(id));
+    //Removes inventory, returns it, wraps in optional and returns optional inventory
+    return Optional.ofNullable(this.mongoTemplate.findAndRemove( query, Inventory.class));
   }
 }
