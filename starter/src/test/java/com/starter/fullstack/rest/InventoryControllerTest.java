@@ -90,11 +90,12 @@ public class InventoryControllerTest {
      * @throws Throwable see MockMvc
      */
     @Test
-    public void remove() throws Throwable {
+    public void deleteTest() throws Throwable {
+        //Performs test of delete with content from inventory(inventory exists on setup
         this.mockMvc.perform(delete("/inventory")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("[\"" + this.inventory.getId() + "\"]"))
+                        .content(this.inventory.getId()))
                 .andExpect(status().isOk());
 
         Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
