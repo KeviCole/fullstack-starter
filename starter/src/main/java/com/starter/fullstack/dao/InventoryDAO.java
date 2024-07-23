@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 
 /**
@@ -79,9 +80,14 @@ public class InventoryDAO {
    * @param inventory Inventory to Update.
    * @return Updated Inventory.
    */
+  //Alter this
   public Optional<Inventory> update(String id, Inventory inventory) {
-    // TODO
-    return Optional.empty();
+    //Pass ny reference
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(inventory.getId()));
+    Update update = new Update();
+    update.rename(inventory.getId(),id);
+    return Optional.ofNullable(this.mongoTemplate.findAndModify(query, update, Inventory.class));
   }
 
   /**

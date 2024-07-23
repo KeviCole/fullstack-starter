@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +58,7 @@ public class InventoryControllerTest {
      */
     @Test
     public void findAll() throws Throwable {
-        this.mockMvc.perform(get("/inventories")
+        this.mockMvc.perform(get("/inventory")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
@@ -92,6 +93,19 @@ public class InventoryControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.inventory.getId()))
+                .andExpect(status().isOk());
+
+        Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
+    }
+
+    @Test
+    public void updateTest() throws Throwable {
+        //Performs test of delete with content from inventory(inventory exists on setup
+        this.mockMvc.perform(put("/inventory")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("This is the new id")
+                        .content(this.objectMapper.writeValueAsString(this.inventory)))
                 .andExpect(status().isOk());
 
         Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());

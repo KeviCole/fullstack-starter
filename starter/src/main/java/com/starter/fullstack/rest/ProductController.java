@@ -1,6 +1,5 @@
 package com.starter.fullstack.rest;
 
-
 import com.starter.fullstack.api.Product;
 import com.starter.fullstack.dao.ProductDAO;
 import java.util.List;
