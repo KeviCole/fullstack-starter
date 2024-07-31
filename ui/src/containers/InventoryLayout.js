@@ -1,7 +1,16 @@
 import * as inventoryDuck from '../ducks/inventory'
 import * as productDuck from '../ducks/products'
+import Avatar from '@material-ui/core/Avatar'
 import Checkbox from '@material-ui/core/Checkbox'
+import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
+import ImageIcon from '@material-ui/icons/Image'
+import InventoryFormModal from '../components/Inventory/InventoryFormModal'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
@@ -12,7 +21,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 const normalizeInventory = (inventory) => inventory.map(inv => ({
   ...inv,
-  unitOfMeasurement: MeasurementUnits[inv.unitOfMeasurement].name,
+  //unitOfMeasurement: MeasurementUnits[inv.unitOfMeasurement].name,
   bestBeforeDate: moment(inv.bestBeforeDate).format('MM/DD/YYYY')
 }))
 
@@ -48,12 +57,17 @@ const InventoryLayout = (props) => {
   const dispatch = useDispatch()
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
+  //Fine
+  //Added 2 below
+  //const deleteInventory = useCallback(ids => { dispatch(inventoryDuck.deleteInventory(ids)) }, [dispatch])
+  const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
       dispatch(productDuck.findProducts())
     }
   }, [dispatch, isFetched])
+  //Fine
 
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
@@ -94,11 +108,51 @@ const InventoryLayout = (props) => {
   }
 
   const isSelected = (id) => selected.indexOf(id) !== -1
+  //Fine
+
+  //New
+  const [isCreateOpen, setCreateOpen] = React.useState(false)
+  //const [isEditOpen, setEditOpen] = React.useState(false)
+  //const [isDeleteOpen, setDeleteOpen] = React.useState(false)
+  const toggleCreate = () => {
+    setCreateOpen(true)
+  }
+  /*
+  const toggleEdit = () => {
+    setEditOpen(true)
+  }
+  const toggleDelete = () => {
+    setDeleteOpen(true)
+  } */
+  const toggleModals = (resetChecked) => {
+    setCreateOpen(false)
+    //setDeleteOpen(false)
+    //setEditOpen(false)
+    if (resetChecked) {
+      setChecked([])
+    }
+  }
+  const [checked, setChecked] = React.useState([])
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value)
+    const newChecked = [...checked]
+
+    if (currentIndex === -1) {
+      newChecked.push(value)
+    } else {
+      newChecked.splice(currentIndex, 1)
+    }
+    setChecked(newChecked)
+  }
 
   return (
     <Grid container>
       <Grid item xs={12}>
-        <EnhancedTableToolbar numSelected={selected.length} title='Inventory'/>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          title='Inventory'
+          toggleCreate={toggleCreate}
+        />
         <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
             <EnhancedTableHead
@@ -140,9 +194,18 @@ const InventoryLayout = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
+        <InventoryFormModal
+          title='Create'
+          formName='inventoryCreate'
+          isDialogOpen={isCreateOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={{}}
+        />
       </Grid>
     </Grid>
   )
 }
 
 export default InventoryLayout
+

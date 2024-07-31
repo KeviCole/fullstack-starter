@@ -72,7 +72,8 @@ const refreshInventory = createAction(actions.INVENTORY_REFRESH, (payload) =>
   (dispatch, getState, config) => {
     //Sorts inventory
     dispatch(openSuccess('success'))
-    return payload.sort((inventoryA, inventoryB) => inventoryA.name < inventoryB.name ? -1 : inventoryA.name > inventoryB.name ? 1 : 0)
+    return payload.sort((inventoryA, inventoryB) =>
+      inventoryA.name < inventoryB.name ? -1 : inventoryA.name > inventoryB.name ? 1 : 0)
   }
 )
 
@@ -90,4 +91,4 @@ export default handleActions({
   })
 }, defaultState)
 
-export { defaultState, findInventory, saveInventory, deleteInventory, updateInventory, refreshInventory}
+export { defaultState, findInventory, saveInventory, deleteInventory, updateInventory, refreshInventory }
