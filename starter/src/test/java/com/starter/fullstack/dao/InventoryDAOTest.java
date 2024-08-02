@@ -2,7 +2,6 @@ package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
 import org.junit.After;
@@ -73,7 +72,7 @@ public class InventoryDAOTest {
   }
 
   @Test
-  public void delete(){
+  public void delete() {
     //Creates new inventory object
     Inventory inventory = new Inventory();
     inventory.setName(NAME);
@@ -90,7 +89,7 @@ public class InventoryDAOTest {
   }
 
   @Test
-  public void update(){
+  public void update() {
     Inventory inventory = new Inventory();
     inventory.setName(NAME);
     inventory.setProductType(PRODUCT_TYPE);

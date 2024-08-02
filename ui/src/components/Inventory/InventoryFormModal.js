@@ -18,6 +18,7 @@ class InventoryFormModal extends React.Component {
       handleDialog,
       handleInventory,
       title,
+      initialValues,
       products
     } = this.props
 
@@ -29,9 +30,12 @@ class InventoryFormModal extends React.Component {
         onClose={() => { handleDialog(false) }}
       >
         <Formik
+          initialValues={initialValues}
           onSubmit={values => {
-            handleInventory(values)
-            handleDialog(true)
+            if (values.name !== ''){
+              handleInventory(values)
+              handleDialog(true)
+            }
           }}>
           {helpers =>
             <Form

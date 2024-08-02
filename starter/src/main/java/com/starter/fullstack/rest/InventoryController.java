@@ -7,8 +7,10 @@ import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,11 +49,14 @@ public class InventoryController {
   }
 
   @DeleteMapping
-  public Inventory deleteInventories(@RequestBody String id) {
+  public List<Inventory> deleteInventories(@Valid @RequestBody String[] ids) {
     //Deletes inventory
-    Optional<Inventory> inventory = this.inventoryDAO.delete(id);
-    //Unwraps and returns original or new inventory
-    return inventory.orElseGet(Inventory::new);
+    List<Inventory> newInventory = new java.util.ArrayList<>(List.of());
+
+    for (String i : ids) {
+      newInventory.add(this.inventoryDAO.delete(i).orElseGet(Inventory::new));
+    }
+    return newInventory;
   }
 
   @PutMapping

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.maven.plugins:maven-surefire-plugin:2.22.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.apache.maven.plugins" artifactId="maven-surefire-plugin" version="2.22.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.maven.plugins/maven-surefire-plugin/2.22.2/63d1dd017bfecc64a7b68b964e39e8d9f8f11a14/maven-surefire-plugin-2.22.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
