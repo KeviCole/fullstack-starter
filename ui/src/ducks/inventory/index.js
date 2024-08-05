@@ -61,10 +61,10 @@ const deleteInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
     })
 )
 
-const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory, ids) =>
+const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory, id) =>
   //Calls update
   (dispatch, getState, config) => axios
-    .put(`${config.restAPIUrl}/inventory`, ids, inventory)
+    .put(`${config.restAPIUrl}/inventory`, id, inventory)
     .then((suc) => dispatch(refreshInventory(suc.data)))
 )
 

@@ -17,7 +17,7 @@ export let defaultState = {
 export const findProducts = createAction(actions.PRODUCTS_GET_ALL, () =>
   (dispatch, getState, config) => axios
     .get(`${config.restAPIUrl}/products`)
-    .then((suc)  =>  dispatch(refreshProducts(suc.data)))
+    .then((suc) => dispatch(refreshProducts(suc.data)))
 )
 
 export const saveProducts = createAction(actions.PRODUCTS_SAVE, (product) =>

@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 
 /**
@@ -54,13 +53,25 @@ public class InventoryDAO {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    //Inserts inventory and changes Id
-    Inventory newInventory = new Inventory();
-    newInventory.setName(inventory.getName());
-    newInventory.setProductType(inventory.getProductType());
-    newInventory.setId(null);
-    this.mongoTemplate.insert(newInventory);
-    return newInventory;
+    //Inserts inventory and changes id
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(inventory.getId()));
+    //Edits if it exists
+    if(this.mongoTemplate.exists(query, Inventory.class)){
+      Inventory newInventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+      newInventory.setName(inventory.getName());
+      newInventory.setProductType(inventory.getProductType());
+      this.mongoTemplate.insert(newInventory);
+      return newInventory;
+    } else {
+      //Otherwise adds new Item
+      Inventory newInventory = new Inventory();
+      newInventory.setName(inventory.getName());
+      newInventory.setProductType(inventory.getProductType());
+      newInventory.setId(null);
+      this.mongoTemplate.insert(newInventory);
+      return newInventory;
+    }
   }
 
   /**
@@ -79,14 +90,16 @@ public class InventoryDAO {
    * @param inventory Inventory to Update.
    * @return Updated Inventory.
    */
-  //Alter this
-  public Optional<Inventory> update(String id, Inventory inventory) {
+
+  public Optional<Inventory> update(Inventory inventory) {
     //Pass ny reference
     Query query = new Query();
     query.addCriteria(Criteria.where("_id").is(inventory.getId()));
-    Update update = new Update();
-    update.rename(inventory.getId(), id);
-    return Optional.ofNullable(this.mongoTemplate.findAndModify(query, update, Inventory.class));
+    Inventory newInventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+    newInventory.setName(inventory.getName());
+    newInventory.setProductType(inventory.getProductType());
+    this.mongoTemplate.insert(newInventory);
+    return Optional.of(newInventory);
   }
 
   /**

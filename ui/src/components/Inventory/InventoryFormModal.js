@@ -21,6 +21,7 @@ class InventoryFormModal extends React.Component {
       initialValues,
       products
     } = this.props
+    let tryingThis = this.props
 
     return (
       <Dialog
@@ -33,7 +34,9 @@ class InventoryFormModal extends React.Component {
           initialValues={initialValues}
           onSubmit={values => {
             if (values.name !== ''){
-              handleInventory(values)
+              //values doesn't work for edit, so only send over the id, name and product type
+              tryingThis={ id: values.id, name: values.name, productType: values.productType }
+              handleInventory(tryingThis)
               handleDialog(true)
             }
           }}>

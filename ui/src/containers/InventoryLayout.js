@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
 import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import { makeStyles } from '@material-ui/core/styles'
-//import { MeasurementUnits } from '../constants/units'
+import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 const normalizeInventory = (inventory) => inventory.map(inv => ({
   ...inv,
-  //unitOfMeasurement: MeasurementUnits[inv.unitOfMeasurement].name,
+  unitOfMeasurement: MeasurementUnits[inv.unitOfMeasurement],
   bestBeforeDate: moment(inv.bestBeforeDate).format('MM/DD/YYYY')
 }))
 
@@ -51,8 +51,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const product = useSelector(state => state.products)
-  //Fine
-  //Added 2 below
+
   const deleteInventory = useCallback(ids => { dispatch(inventoryDuck.deleteInventory(ids)) }, [dispatch])
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
   useEffect(() => {
@@ -61,7 +60,7 @@ const InventoryLayout = (props) => {
       dispatch(productDuck.findProducts())
     }
   }, [dispatch, isFetched])
-  //Fine
+
 
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
@@ -102,27 +101,25 @@ const InventoryLayout = (props) => {
   }
 
   const isSelected = (id) => selected.indexOf(id) !== -1
-  //Fine
 
-  //New
   const [isCreateOpen, setCreateOpen] = React.useState(false)
-  //const [isEditOpen, setEditOpen] = React.useState(false)
+  const [isEditOpen, setEditOpen] = React.useState(false)
   const [isDeleteOpen, setDeleteOpen] = React.useState(false)
   const toggleCreate = () => {
     setCreateOpen(true)
   }
-  /*
+
   const toggleEdit = () => {
     setEditOpen(true)
   }
-  */
+
   const toggleDelete = () => {
     setDeleteOpen(true)
   }
   const toggleModals = (resetChecked) => {
     setCreateOpen(false)
     setDeleteOpen(false)
-    //setEditOpen(false)
+    setEditOpen(false)
     if (resetChecked) {
       setChecked([])
       setSelected([])
@@ -154,6 +151,7 @@ const InventoryLayout = (props) => {
           title='Inventory'
           toggleCreate={toggleCreate}
           toggleDelete={toggleDelete}
+          toggleEdit={toggleEdit}
         />
         <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
@@ -205,6 +203,14 @@ const InventoryLayout = (props) => {
           handleDialog={toggleModals}
           handleInventory={saveInventory}
           initialValues={ { name: '', productType: product.all[0]?.name } }
+        />
+        <InventoryFormModal
+          title='Edit'
+          formName='inventoryEdit'
+          isDialogOpen={isEditOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={checked[0]}
         />
         <InventoryDeleteModal
           title='Delete'

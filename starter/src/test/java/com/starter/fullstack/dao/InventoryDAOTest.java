@@ -93,9 +93,13 @@ public class InventoryDAOTest {
     Inventory inventory = new Inventory();
     inventory.setName(NAME);
     inventory.setProductType(PRODUCT_TYPE);
-    //Changes ID
-    inventory.setId("FLY");
-    Optional<Inventory> updated = this.inventoryDAO.update("Malfoy", inventory);
-    updated.ifPresent(value -> Assert.assertEquals(value.getId(), inventory.getId()));
+    inventory.setId("Figures");
+    this.mongoTemplate.save(inventory);
+    Inventory newInventory = new Inventory();
+    newInventory.setName("Panther");
+    newInventory.setProductType("Orioles");
+    newInventory.setId(inventory.getId());
+    Optional<Inventory> updated = this.inventoryDAO.update(newInventory);
+    updated.ifPresent(value -> Assert.assertNotEquals(value.getName(), inventory.getName()));
   }
 }

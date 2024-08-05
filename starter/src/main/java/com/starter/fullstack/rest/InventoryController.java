@@ -60,9 +60,9 @@ public class InventoryController {
   }
 
   @PutMapping
-  public Inventory updateInventories(@RequestBody String id, @Valid @RequestBody Inventory inventory) {
+  public Inventory updateInventories(@Valid @RequestBody Inventory inventory) {
     //Updates inventory
-    Optional<Inventory> sameInventory = this.inventoryDAO.update(id, inventory);
+    Optional<Inventory> sameInventory = this.inventoryDAO.update(inventory);
     //Unwraps and returns original or new inventory
     return sameInventory.orElseGet(Inventory::new);
   }
