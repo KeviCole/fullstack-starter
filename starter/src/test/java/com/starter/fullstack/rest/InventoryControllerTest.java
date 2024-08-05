@@ -14,9 +14,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,79 +28,94 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 public class InventoryControllerTest {
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  private Inventory inventory;
 
-    private Inventory inventory;
+  @Before
+  public void setup() throws Throwable {
+    this.inventory = new Inventory();
+    this.inventory.setId("ID");
+    this.inventory.setName("TEST");
+    this.inventory.setProductType("Product Name");
+    // Sets Mongo ID and adds first inventory
+    this.inventory = this.mongoTemplate.save(this.inventory);
+  }
 
-    @Before
-    public void setup() throws Throwable {
-        this.inventory = new Inventory();
-        this.inventory.setId("ID");
-        this.inventory.setName("TEST");
-        this.inventory.setProductType("Product Name");
-        // Sets Mongo ID and adds first inventory
-        this.inventory = this.mongoTemplate.save(this.inventory);
-    }
+  @After
+  public void teardown() {
+    this.mongoTemplate.dropCollection(Inventory.class);
+  }
 
-    @After
-    public void teardown() {
-        this.mongoTemplate.dropCollection(Inventory.class);
-    }
+  /**
+   * Test findAll endpoint.
+   * @throws Throwable see MockMvc
+   */
+  @Test
+  public void findAll() throws Throwable {
+    this.mockMvc.perform(get("/inventory")
+                      .accept(MediaType.APPLICATION_JSON))
+              .andExpect(status().isOk())
+              .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
+  }
 
-    /**
-     * Test findAll endpoint.
-     * @throws Throwable see MockMvc
-     */
-    @Test
-    public void findAll() throws Throwable {
-        this.mockMvc.perform(get("/inventory")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
-    }
+  /**
+   * Test create endpoint.
+   * @throws Throwable see MockMvc
+   */
+  @Test
+  public void create() throws Throwable {
+    //Creates inventory
+    this.inventory = new Inventory();
+    this.inventory.setId("TESTING ID");
+    this.inventory.setName("TESTING NAME");
+    this.inventory.setProductType("Product Name");
 
-    /**
-     * Test create endpoint.
-     * @throws Throwable see MockMvc
-     */
-    @Test
-    public void create() throws Throwable {
-        //Creates inventory
-        this.inventory = new Inventory();
-        this.inventory.setId("TESTING ID");
-        this.inventory.setName("TESTING NAME");
-        this.inventory.setProductType("Product Name");
+    //Mock test the create inventories function
+    this.mockMvc.perform(post("/inventory")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(this.objectMapper.writeValueAsString(this.inventory)))
+              .andExpect(status().isOk());
+      //Should be two inventories with setup and new create
+    Assert.assertEquals(2, this.mongoTemplate.findAll(Inventory.class).size());
+  }
 
-        //Mock test the create inventories function
-        this.mockMvc.perform(post("/inventory")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(this.inventory)))
-                .andExpect(status().isOk());
-        //Should be two inventories with setup and new create
-        Assert.assertEquals(2, this.mongoTemplate.findAll(Inventory.class).size());
-    }
+  @Test
+  public void deleteTest() throws Throwable {
+    String[] arr = new String[]{ this.mongoTemplate.findAll(Inventory.class).get(0).getId() };
+      //Performs test of delete with content from inventory(inventory exists on setup
+    this.mockMvc.perform(delete("/inventory")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(Arrays.toString(arr)))
+              .andExpect(status().isOk());
 
-    /**
-     * Test remove endpoint.
-     * @throws Throwable see MockMvc
-     */
-    @Test
-    public void remove() throws Throwable {
-        this.mockMvc.perform(delete("/inventory")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("[\"" + this.inventory.getId() + "\"]"))
-                .andExpect(status().isOk());
+    Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
+  }
 
-        Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
-    }
+  @Test
+  public void update() throws Throwable {
+    //Creates inventory
+    this.inventory = new Inventory();
+    this.inventory.setId(this.mongoTemplate.findAll(Inventory.class).get(0).getId());
+    this.inventory.setName("TESTING NAME");
+    this.inventory.setProductType("Product Name");
+
+    //Mock test the create inventories function
+    this.mockMvc.perform(put("/inventory")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(this.objectMapper.writeValueAsString(this.inventory)))
+            .andExpect(status().isOk());
+    //Should be two inventories with setup and new create
+    Assert.assertEquals(this.inventory.getName(), this.mongoTemplate.findAll(Inventory.class).get(0).getName());
+  }
 }

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.maven.plugin-tools:maven-plugin-annotations:3.5.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.apache.maven.plugin-tools" artifactId="maven-plugin-annotations" version="3.5.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.maven.plugin-tools/maven-plugin-annotations/3.5.2/958c81789d4cc52e7f83ede3168633c0b03ea2de/maven-plugin-annotations-3.5.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

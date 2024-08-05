@@ -59,8 +59,7 @@ class ProductFormModal extends React.Component {
                   type='submit'
                   form={formName}
                   color='secondary'
-                  disabled={!helpers.dirty}>
-                  Save
+                  disabled={!helpers.dirty}>Save
                 </Button>
               </DialogActions>
             </Form>

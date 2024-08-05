@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 /**
@@ -51,7 +53,10 @@ public class InventoryDAO {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    //Inserts inventory and changes Id
+    //Inserts inventory and changes id
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(inventory.getId()));
+    //Otherwise adds new Item
     Inventory newInventory = new Inventory();
     newInventory.setName(inventory.getName());
     newInventory.setProductType(inventory.getProductType());
@@ -76,9 +81,15 @@ public class InventoryDAO {
    * @param inventory Inventory to Update.
    * @return Updated Inventory.
    */
-  public Optional<Inventory> update(String id, Inventory inventory) {
-    // TODO
-    return Optional.empty();
+
+  public Optional<Inventory> update(Inventory inventory) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(inventory.getId()));
+    Inventory newInventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+    newInventory.setName(inventory.getName());
+    newInventory.setProductType(inventory.getProductType());
+    this.mongoTemplate.insert(newInventory);
+    return Optional.of(newInventory);
   }
 
   /**
@@ -87,7 +98,10 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
-    return Optional.empty();
+    //Creates query to search for id
+    Query query = new Query();
+    query.addCriteria(Criteria.where("_id").is(id));
+    //Removes inventory, returns it, wraps in optional and returns optional inventory
+    return Optional.ofNullable(this.mongoTemplate.findAndRemove(query, Inventory.class));
   }
 }

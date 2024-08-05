@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.maven.reporting:maven-reporting-api:2.2.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.apache.maven.reporting" artifactId="maven-reporting-api" version="2.2.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.maven.reporting/maven-reporting-api/2.2.1/61942e490c112f84b3a1a61572d570f369414939/maven-reporting-api-2.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
