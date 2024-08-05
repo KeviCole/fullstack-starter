@@ -61,11 +61,22 @@ const deleteInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
     })
 )
 
-const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory, id) =>
+const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
   //Calls update
   (dispatch, getState, config) => axios
-    .put(`${config.restAPIUrl}/inventory`, id, inventory)
-    .then((suc) => dispatch(refreshInventory(suc.data)))
+    .put(`${config.restAPIUrl}/inventory`, inventory)
+    .then((suc) => {
+      const invs = []
+      getState().inventory.all.forEach(
+        inv => {
+          if (inv.id !== suc.data.id) {
+            invs.push(inv)
+          }
+        }
+      )
+      invs.push(suc.data)
+      dispatch(refreshInventory(invs))
+    })
 )
 
 const refreshInventory = createAction(actions.INVENTORY_REFRESH, (payload) =>

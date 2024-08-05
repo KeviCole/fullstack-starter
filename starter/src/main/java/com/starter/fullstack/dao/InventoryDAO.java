@@ -56,22 +56,13 @@ public class InventoryDAO {
     //Inserts inventory and changes id
     Query query = new Query();
     query.addCriteria(Criteria.where("_id").is(inventory.getId()));
-    //Edits if it exists
-    if(this.mongoTemplate.exists(query, Inventory.class)){
-      Inventory newInventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
-      newInventory.setName(inventory.getName());
-      newInventory.setProductType(inventory.getProductType());
-      this.mongoTemplate.insert(newInventory);
-      return newInventory;
-    } else {
-      //Otherwise adds new Item
-      Inventory newInventory = new Inventory();
-      newInventory.setName(inventory.getName());
-      newInventory.setProductType(inventory.getProductType());
-      newInventory.setId(null);
-      this.mongoTemplate.insert(newInventory);
-      return newInventory;
-    }
+    //Otherwise adds new Item
+    Inventory newInventory = new Inventory();
+    newInventory.setName(inventory.getName());
+    newInventory.setProductType(inventory.getProductType());
+    newInventory.setId(null);
+    this.mongoTemplate.insert(newInventory);
+    return newInventory;
   }
 
   /**
@@ -92,7 +83,6 @@ public class InventoryDAO {
    */
 
   public Optional<Inventory> update(Inventory inventory) {
-    //Pass ny reference
     Query query = new Query();
     query.addCriteria(Criteria.where("_id").is(inventory.getId()));
     Inventory newInventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
